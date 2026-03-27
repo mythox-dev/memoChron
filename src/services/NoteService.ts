@@ -213,11 +213,11 @@ export class NoteService {
     event: CalendarEvent
   ): EventTemplateVariables {
     const dateStr = this.formatDate(event.start, event.source);
-    const dateIsoStr = event.start.toISOString().split("T")[0];
+    const dateIsoStr = this.toLocalISODate(event.start);
     const startDateStr = this.formatDate(event.start, event.source);
-    const startDateIsoStr = event.start.toISOString().split("T")[0];
+    const startDateIsoStr = this.toLocalISODate(event.start);
     const endDateStr = this.formatDate(event.end, event.source);
-    const endDateIsoStr = event.end.toISOString().split("T")[0];
+    const endDateIsoStr = this.toLocalISODate(event.end);
 
     const attendeesList = event.attendees || [];
     const attendeeLinks = this.createAttendeeLinks(attendeesList, event.source);
@@ -314,6 +314,13 @@ export class NoteService {
     return virtualKeywords.some((keyword) => lowerLocation.includes(keyword));
   }
 
+  private toLocalISODate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
   private formatDate(date: Date, source?: string): string {
     const calendarSettings = source
       ? this.getCalendarNotesSettings(source)
@@ -322,7 +329,7 @@ export class NoteService {
       calendarSettings?.noteDateFormat ?? this.settings.noteDateFormat;
 
     const formatters: Record<string, () => string> = {
-      ISO: () => date.toISOString().split("T")[0],
+      ISO: () => this.toLocalISODate(date),
       US: () => {
         const s = date.toLocaleDateString("en-US", {
           month: "2-digit",
