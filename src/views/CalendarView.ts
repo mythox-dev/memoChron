@@ -745,6 +745,42 @@ export class CalendarView extends ItemView {
     }
   }
 
+  private renderEventCheckboxOrIndicator(
+    eventEl: HTMLElement,
+    event: CalendarEvent
+  ): void {
+    const noteExists = !!this.plugin.noteService.getExistingEventNote(event);
+
+    if (noteExists) {
+      // Note already exists — show a muted file-check icon
+      // Clicking the event row still opens the note via addEventClickHandler
+      const indicator = eventEl.createEl("div", {
+        cls: "memochron-note-exists-indicator",
+        attr: { "aria-label": "Note already exists" },
+      });
+      setIcon(indicator, "file-check");
+    } else {
+      // No note yet — show a small checkbox
+      const checkboxWrapper = eventEl.createEl("div", {
+        cls: "memochron-event-checkbox-wrapper",
+      });
+      const checkbox = checkboxWrapper.createEl("input", {
+        attr: { type: "checkbox" },
+        cls: "memochron-event-checkbox",
+      }) as HTMLInputElement;
+
+      checkbox.checked = this.agendaCheckboxState.get(event.id) ?? !event.isAllDay;
+
+      checkbox.addEventListener("change", (e) => {
+        e.stopPropagation();
+        this.agendaCheckboxState.set(event.id, checkbox.checked);
+      });
+
+      // Prevent checkbox clicks from bubbling to the event row click handler
+      checkbox.addEventListener("click", (e) => e.stopPropagation());
+    }
+  }
+
   private renderEventItem(list: HTMLElement, event: CalendarEvent, now: Date) {
     const eventEl = list.createEl("div", { cls: "memochron-agenda-event" });
 
@@ -758,9 +794,15 @@ export class CalendarView extends ItemView {
       eventEl.style.setProperty("--event-color", event.color);
     }
 
-    this.renderEventTime(eventEl, event);
-    this.renderEventTitle(eventEl, event);
-    this.renderEventLocation(eventEl, event);
+    // Left: checkbox or note-exists indicator
+    this.renderEventCheckboxOrIndicator(eventEl, event);
+
+    // Right: stacked time / title / location block
+    const contentEl = eventEl.createEl("div", { cls: "memochron-event-content" });
+    this.renderEventTime(contentEl, event);
+    this.renderEventTitle(contentEl, event);
+    this.renderEventLocation(contentEl, event);
+
     this.addEventClickHandler(eventEl, event);
   }
 

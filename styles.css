@@ -1256,3 +1256,52 @@
   font-size: 0.9em;
   margin-top: var(--size-4-2);
 }
+/* Bulk note creation — event row flex layout */
+.memochron-agenda-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* Existing content (time / title / location) stacks vertically in the right column */
+.memochron-event-content {
+  flex: 1;
+  min-width: 0; /* prevent overflow from long titles */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Checkbox */
+.memochron-event-checkbox-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-top: 3px;
+}
+
+.memochron-event-checkbox {
+  width: 13px;
+  height: 13px;
+  opacity: 0.45;
+  cursor: pointer;
+  margin: 0;
+}
+
+.memochron-event-checkbox:hover {
+  opacity: 0.8;
+}
+
+/* Note-exists indicator */
+.memochron-note-exists-indicator {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  opacity: 0.3;
+  padding-top: 3px;
+  color: var(--text-muted);
+}
+
+.memochron-note-exists-indicator svg {
+  width: 13px;
+  height: 13px;
+}
