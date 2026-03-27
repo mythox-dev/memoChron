@@ -209,6 +209,8 @@ export default class MemoChron extends Plugin {
       }
     }
 
+    // Only show a notice when notes were actually created — subsequent launches where
+    // all notes already exist are intentionally silent (safe no-op behavior)
     if (created > 0) {
       const suffix = skipped > 0 ? `, ${skipped} already existed` : "";
       new Notice(

@@ -1334,3 +1334,9 @@
   background: var(--interactive-hover);
   color: var(--text-normal);
 }
+
+/* Spacer for daily note row to align with checkbox column */
+.memochron-event-column-spacer {
+  flex-shrink: 0;
+  width: 13px;
+}

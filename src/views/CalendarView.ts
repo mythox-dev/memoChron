@@ -623,14 +623,15 @@ export class CalendarView extends ItemView {
     this.agenda.empty();
     this.agendaCheckboxState.clear();
 
-    this.createAgendaHeader(date);
-
     const events = this.plugin.calendarService.getEventsForWidget(date);
 
     // Populate checkbox state: timed events default checked; all-day events default unchecked
     events.forEach((event) => {
       this.agendaCheckboxState.set(event.id, !event.isAllDay);
     });
+
+    this.createAgendaHeader(date);
+
     const hasEvents = events.length > 0;
     const showDailyNote = this.plugin.settings.showDailyNoteInAgenda;
 
@@ -743,14 +744,15 @@ export class CalendarView extends ItemView {
       dailyNoteEl.style.setProperty("--event-color", dailyNoteColor);
     }
 
-    // Add title first
-    dailyNoteEl.createEl("div", {
+    // Spacer to align with checkbox column in other event rows
+    dailyNoteEl.createEl("div", { cls: "memochron-event-column-spacer" });
+
+    const contentEl = dailyNoteEl.createEl("div", { cls: "memochron-event-content" });
+    contentEl.createEl("div", {
       cls: "memochron-event-title",
       text: "Daily Note",
     });
-
-    // Add icon below like a location
-    dailyNoteEl.createEl("div", {
+    contentEl.createEl("div", {
       cls: "memochron-event-location",
       text: "📝 Open daily note",
     });
