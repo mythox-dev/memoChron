@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { Plugin, Notice } from "obsidian";
 import { CalendarService } from "./services/CalendarService";
 import { NoteService } from "./services/NoteService";
 import { CalendarView } from "./views/CalendarView";
@@ -23,8 +23,11 @@ export default class MemoChron extends Plugin {
     this.registerCodeBlockProcessors();
     this.addSettingTab(new SettingsTab(this.app, this));
 
-    this.app.workspace.onLayoutReady(() => {
-      this.activateView();
+    this.app.workspace.onLayoutReady(async () => {
+      await this.activateView();
+      if (this.settings.autoCreateNotesOnLaunch) {
+        await this.autoCreateNotesForToday();
+      }
     });
 
     this.setupAutoRefresh();
@@ -175,6 +178,42 @@ export default class MemoChron extends Plugin {
     if (this.refreshTimer !== null) {
       window.clearInterval(this.refreshTimer);
       this.refreshTimer = null;
+    }
+  }
+
+  private async autoCreateNotesForToday(): Promise<void> {
+    if (!this.settings.noteLocation) return;
+
+    const today = new Date();
+    const events = this.calendarService.getEventsForWidget(today);
+
+    // Guard: if events weren't loaded (e.g., no calendars configured), do nothing silently
+    if (events.length === 0) return;
+
+    let created = 0;
+    let skipped = 0;
+
+    for (const event of events) {
+      if (event.isAllDay) continue; // Skip all-day events (holidays, OOO, etc.)
+
+      if (this.noteService.getExistingEventNote(event)) {
+        skipped++;
+        continue;
+      }
+
+      try {
+        await this.noteService.createEventNote(event);
+        created++;
+      } catch (error) {
+        console.error("MemoChron: Failed to auto-create note for:", event.title, error);
+      }
+    }
+
+    if (created > 0) {
+      const suffix = skipped > 0 ? `, ${skipped} already existed` : "";
+      new Notice(
+        `MemoChron: ${created} meeting note${created !== 1 ? "s" : ""} created${suffix}`
+      );
     }
   }
 }
