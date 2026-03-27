@@ -30,6 +30,7 @@ export class CalendarView extends ItemView {
   private handleDragMoveBound: (e: MouseEvent) => void;
   private handleDragEndBound: (e: MouseEvent) => void;
   private viewMode: CalendarViewMode = 'month';
+  private agendaCheckboxState: Map<string, boolean> = new Map();
 
   constructor(leaf: WorkspaceLeaf, private plugin: MemoChron) {
     super(leaf);
@@ -620,10 +621,16 @@ export class CalendarView extends ItemView {
 
   private async showDayAgenda(date: Date) {
     this.agenda.empty();
+    this.agendaCheckboxState.clear();
 
     this.createAgendaHeader(date);
 
     const events = this.plugin.calendarService.getEventsForWidget(date);
+
+    // Populate checkbox state: timed events default checked; all-day events default unchecked
+    events.forEach((event) => {
+      this.agendaCheckboxState.set(event.id, !event.isAllDay);
+    });
     const hasEvents = events.length > 0;
     const showDailyNote = this.plugin.settings.showDailyNoteInAgenda;
 
