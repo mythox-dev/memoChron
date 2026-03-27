@@ -511,7 +511,6 @@ export class SettingsTab extends PluginSettingTab {
       .setDesc("Configure attendee type filtering in the Advanced section below.");
 
     // Auto-create on launch
-    this.renderSubgroupLabel(container, "Launch Behavior");
     new Setting(container)
       .setName("Auto-create today's meeting notes on launch")
       .setDesc(
