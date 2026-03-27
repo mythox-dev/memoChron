@@ -655,13 +655,71 @@ export class CalendarView extends ItemView {
     }
   }
 
-  private createAgendaHeader(date: Date) {
-    this.agenda.createEl("h3", {
+  private async bulkCreateNotesForDate(date: Date): Promise<void> {
+    if (!this.plugin.settings.noteLocation) {
+      new Notice("MemoChron: Please set a note location in settings first");
+      return;
+    }
+
+    const events = this.plugin.calendarService.getEventsForWidget(date);
+    let created = 0;
+    let skipped = 0;
+
+    for (const event of events) {
+      // Skip unchecked events
+      if (!this.agendaCheckboxState.get(event.id)) continue;
+
+      // Double-safety: skip if note already exists
+      if (this.plugin.noteService.getExistingEventNote(event)) {
+        skipped++;
+        continue;
+      }
+
+      try {
+        await this.plugin.noteService.createEventNote(event);
+        created++;
+      } catch (error) {
+        console.error("MemoChron: Failed to create note for event:", event.title, error);
+      }
+    }
+
+    // Show summary
+    if (created === 0 && skipped === 0) {
+      new Notice("MemoChron: No checked events to create notes for");
+    } else if (skipped > 0) {
+      new Notice(
+        `MemoChron: ${created} note${created !== 1 ? "s" : ""} created, ${skipped} skipped (already exist)`
+      );
+    } else {
+      new Notice(`MemoChron: ${created} note${created !== 1 ? "s" : ""} created`);
+    }
+
+    // Re-render the agenda — note-exists indicators update, checkboxes reset to defaults
+    await this.showDayAgenda(date);
+  }
+
+  private createAgendaHeader(date: Date): void {
+    const headerEl = this.agenda.createEl("div", {
+      cls: "memochron-agenda-header",
+    });
+
+    headerEl.createEl("h3", {
       text: date.toLocaleDateString("default", {
         weekday: "long",
         month: "long",
         day: "numeric",
       }),
+    });
+
+    const btn = headerEl.createEl("button", {
+      cls: "memochron-bulk-create-btn",
+      attr: { "aria-label": "Create notes for all checked events" },
+      text: "Create Notes for Today",
+    });
+
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      await this.bulkCreateNotesForDate(date);
     });
   }
 

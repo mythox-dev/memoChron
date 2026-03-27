@@ -1303,3 +1303,34 @@
   width: 13px;
   height: 13px;
 }
+
+/* Agenda header with bulk-create button */
+.memochron-agenda-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.memochron-agenda-header h3 {
+  margin: 0;
+  flex: 1;
+}
+
+.memochron-bulk-create-btn {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--interactive-normal);
+  color: var(--text-muted);
+  border: 1px solid var(--background-modifier-border);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.memochron-bulk-create-btn:hover {
+  background: var(--interactive-hover);
+  color: var(--text-normal);
+}
