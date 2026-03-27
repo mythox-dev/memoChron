@@ -686,6 +686,8 @@ export class CalendarView extends ItemView {
     // Show summary
     if (created === 0 && skipped === 0) {
       new Notice("MemoChron: No checked events to create notes for");
+    } else if (created === 0) {
+      new Notice(`MemoChron: All ${skipped} note${skipped !== 1 ? "s" : ""} already exist`);
     } else if (skipped > 0) {
       new Notice(
         `MemoChron: ${created} note${created !== 1 ? "s" : ""} created, ${skipped} skipped (already exist)`
