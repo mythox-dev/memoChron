@@ -347,6 +347,9 @@
   font-size: 0.9em;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
 }
 
 .memochron-agenda-event:hover {
@@ -1256,13 +1259,8 @@
   font-size: 0.9em;
   margin-top: var(--size-4-2);
 }
-/* Bulk note creation — event row flex layout */
-.memochron-agenda-event {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-}
 
+/* Bulk note creation — event row flex layout */
 /* Existing content (time / title / location) stacks vertically in the right column */
 .memochron-event-content {
   flex: 1;
