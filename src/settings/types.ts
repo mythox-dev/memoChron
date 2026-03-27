@@ -59,6 +59,7 @@ export interface MemoChronSettings {
   filteredCuTypes: string[]; // CUTYPE values to INCLUDE (default: ["INDIVIDUAL", ""])
   filteredAttendees: string; // Comma-separated CN values to EXCLUDE from attendee lists
   calendarHeight: number;
+  autoCreateNotesOnLaunch: boolean; // Silently create today's timed meeting notes on Obsidian launch
 }
 
 export const DEFAULT_SETTINGS: MemoChronSettings = {
@@ -93,4 +94,5 @@ export const DEFAULT_SETTINGS: MemoChronSettings = {
   filteredCuTypes: DEFAULT_FILTERED_CUTYPES, // Include individuals and unspecified
   filteredAttendees: "", // No attendees filtered by default
   calendarHeight: 350, // Default calendar height in pixels
+  autoCreateNotesOnLaunch: false,
 };

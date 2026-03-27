@@ -509,6 +509,23 @@ export class SettingsTab extends PluginSettingTab {
     // Link to Advanced for filtering
     new Setting(container)
       .setDesc("Configure attendee type filtering in the Advanced section below.");
+
+    // Auto-create on launch
+    this.renderSubgroupLabel(container, "Launch Behavior");
+    new Setting(container)
+      .setName("Auto-create today's meeting notes on launch")
+      .setDesc(
+        "When enabled, MemoChron will silently create notes for today's timed events on Obsidian startup. " +
+        "All-day events are skipped. Events with existing notes are skipped, so this is safe to leave on."
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.autoCreateNotesOnLaunch)
+          .onChange(async (value) => {
+            this.plugin.settings.autoCreateNotesOnLaunch = value;
+            await this.plugin.saveSettings();
+          })
+      );
   }
 
   private async addNewCalendar(): Promise<void> {
