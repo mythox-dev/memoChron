@@ -1335,6 +1335,24 @@
   color: var(--text-normal);
 }
 
+.memochron-ics-refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 2px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.memochron-ics-refresh-btn:hover {
+  color: var(--text-normal);
+  background: var(--interactive-hover);
+}
+
 /* Spacer for daily note row to align with checkbox column */
 .memochron-event-column-spacer {
   flex-shrink: 0;

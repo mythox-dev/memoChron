@@ -724,6 +724,18 @@ export class CalendarView extends ItemView {
       e.stopPropagation();
       await this.bulkCreateNotesForDate(date);
     });
+
+    const refreshBtn = headerEl.createEl("button", {
+      cls: "memochron-ics-refresh-btn clickable-icon",
+      attr: { "aria-label": "Force ICS calendar refresh" },
+    });
+    setIcon(refreshBtn, "refresh-cw");
+
+    refreshBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      new Notice("MemoChron: Refreshing calendars…");
+      await this.refreshEvents(true);
+    });
   }
 
   private renderDailyNoteEntry(list: HTMLElement, date: Date) {
@@ -926,7 +938,7 @@ export class CalendarView extends ItemView {
   private addEventClickHandler(eventEl: HTMLElement, event: CalendarEvent) {
     eventEl.addEventListener("touchstart", () => { }, { passive: false });
 
-    eventEl.addEventListener("click", async (e) => {
+    eventEl.addEventListener("dblclick", async (e) => {
       e.stopPropagation();
       try {
         await this.showEventDetails(event);
